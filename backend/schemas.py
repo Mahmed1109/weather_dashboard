@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 class WeatherResponse(BaseModel):
     city: str
@@ -14,3 +14,18 @@ class WeatherResponse(BaseModel):
     description: str
     icon: str
     visibility: int
+
+class ForecastItem(BaseModel):
+    date: str
+    time: str
+    temperature: float
+    feels_like: float
+    description: str
+    icon: str
+    humidity: int
+    wind_speed: float
+
+class ForecastResponse(BaseModel):
+    city: str
+    country: str
+    forecast: List[ForecastItem]
