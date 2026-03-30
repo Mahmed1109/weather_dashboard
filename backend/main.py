@@ -20,7 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def parse_weather(data: dict) -> WeatherResponse:
+def parse_weather(data: dict, units: str = "metric") -> WeatherResponse:
     return WeatherResponse(
         city=data["name"],
         country=data["sys"]["country"],
@@ -33,17 +33,18 @@ def parse_weather(data: dict) -> WeatherResponse:
         wind_speed=data["wind"]["speed"],
         description=data["weather"][0]["description"],
         icon=data["weather"][0]["icon"],
-        visibility=data["visibility"]
+        visibility=data["visibility"],
+        units=units
     )
 
-async def fetch_weather(city: str) -> dict:
+async def fetch_weather(city: str, units: str = "metric") -> dict:
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"{BASE_URL}/weather",
             params={
                 "q": city,
                 "appid": API_KEY,
-                "units": "metric"
+                "units": units
             }
         )
 
@@ -61,26 +62,35 @@ def root():
     return {"message": "Weather Dashboard API is running"}
 
 @app.get("/weather/{city}", response_model=WeatherResponse)
-async def get_weather(city: str):
-    data = await fetch_weather(city)
-    return parse_weather(data)
+async def get_weather(
+    city: str,
+    units: str = Query("metric", description="Units: metric or imperial")
+):
+    data = await fetch_weather(city, units)
+    return parse_weather(data, units)
 
 @app.get("/search", response_model=WeatherResponse)
-async def search_weather(q: str = Query(..., description="City name to search")):
+async def search_weather(
+    q: str = Query(..., description="City name to search"),
+    units: str = Query("metric", description="Units: metric or imperial")
+):
     if len(q.strip()) < 2:
         raise HTTPException(status_code=400, detail="Search query must be at least 2 characters")
-    data = await fetch_weather(q.strip())
-    return parse_weather(data)
+    data = await fetch_weather(q.strip(), units)
+    return parse_weather(data, units)
 
 @app.get("/forecast/{city}", response_model=ForecastResponse)
-async def get_forecast(city: str):
+async def get_forecast(
+    city: str,
+    units: str = Query("metric", description="Units: metric or imperial")
+):
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"{BASE_URL}/forecast",
             params={
                 "q": city,
                 "appid": API_KEY,
-                "units": "metric"
+                "units": units
             }
         )
 
@@ -108,5 +118,6 @@ async def get_forecast(city: str):
     return ForecastResponse(
         city=data["city"]["name"],
         country=data["city"]["country"],
-        forecast=forecast_items
+        forecast=forecast_items,
+        units=units
     )
