@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import List, Optional
 
 class WeatherResponse(BaseModel):
     city: str
@@ -14,6 +14,7 @@ class WeatherResponse(BaseModel):
     description: str
     icon: str
     visibility: int
+    units: str = "metric"
 
 class ForecastItem(BaseModel):
     date: str
@@ -29,3 +30,8 @@ class ForecastResponse(BaseModel):
     city: str
     country: str
     forecast: List[ForecastItem]
+    units: str = "metric"
+
+class ErrorResponse(BaseModel):
+    detail: str
+    city: Optional[str] = None
