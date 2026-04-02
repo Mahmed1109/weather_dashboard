@@ -129,28 +129,28 @@
             margin-bottom: 30px;
         }
 
-        .weather-main .city-info h2 {
+        .city-info h2 {
             font-size: 2.5rem;
             font-weight: 300;
         }
 
-        .weather-main .city-info p {
+        .city-info p {
             color: rgba(255, 255, 255, 0.5);
             font-size: 0.9rem;
             margin-top: 5px;
         }
 
-        .weather-main .temp-info {
+        .temp-info {
             text-align: right;
         }
 
-        .weather-main .temp-info .temperature {
+        .temperature {
             font-size: 4rem;
             font-weight: 200;
             line-height: 1;
         }
 
-        .weather-main .temp-info .description {
+        .description {
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.9rem;
             margin-top: 5px;
@@ -170,13 +170,13 @@
             text-align: center;
         }
 
-        .stat-item .stat-value {
+        .stat-value {
             font-size: 1.4rem;
             font-weight: 500;
             margin-bottom: 4px;
         }
 
-        .stat-item .stat-label {
+        .stat-label {
             font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.4);
             text-transform: uppercase;
@@ -232,11 +232,11 @@
         <div class="weather-card" id="weather-card">
             <div class="weather-main">
                 <div class="city-info">
-                    <h2 id="city-name">London</h2>
-                    <p id="country-name">United Kingdom</p>
+                    <h2 id="city-name">--</h2>
+                    <p id="country-name">--</p>
                 </div>
                 <div class="temp-info">
-                    <div class="temperature" id="temperature">--°C</div>
+                    <div class="temperature" id="temperature">--</div>
                     <div class="description" id="description">--</div>
                 </div>
             </div>
@@ -272,11 +272,68 @@
 
     <script>
         const API = 'http://127.0.0.1:8000';
+        let currentUnits = 'metric';
 
-        function searchWeather() {
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('error-message').classList.remove('active');
+            document.getElementById('weather-card').classList.remove('active');
+        }
+
+        function showError(message) {
+            document.getElementById('loading').classList.remove('active');
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-message').classList.add('active');
+            document.getElementById('weather-card').classList.remove('active');
+        }
+
+        function showWeather() {
+            document.getElementById('loading').classList.remove('active');
+            document.getElementById('error-message').classList.remove('active');
+            document.getElementById('weather-card').classList.add('active');
+        }
+
+        function getUnitSymbol() {
+            return currentUnits === 'metric' ? '°C' : '°F';
+        }
+
+        function getWindUnit() {
+            return currentUnits === 'metric' ? 'm/s' : 'mph';
+        }
+
+        function displayWeather(data) {
+            document.getElementById('city-name').textContent = data.city;
+            document.getElementById('country-name').textContent = data.country;
+            document.getElementById('temperature').textContent = `${Math.round(data.temperature)}${getUnitSymbol()}`;
+            document.getElementById('description').textContent = data.description;
+            document.getElementById('feels-like').textContent = `${Math.round(data.feels_like)}${getUnitSymbol()}`;
+            document.getElementById('humidity').textContent = `${data.humidity}%`;
+            document.getElementById('wind-speed').textContent = `${data.wind_speed} ${getWindUnit()}`;
+            document.getElementById('pressure').textContent = `${data.pressure} hPa`;
+            document.getElementById('visibility').textContent = `${(data.visibility / 1000).toFixed(1)} km`;
+            document.getElementById('temp-range').textContent = `${Math.round(data.temp_max)}° / ${Math.round(data.temp_min)}°`;
+            showWeather();
+        }
+
+        async function searchWeather() {
             const city = document.getElementById('search-input').value.trim();
             if (!city) return;
-            console.log('Searching for:', city);
+
+            showLoading();
+
+            try {
+                const res = await fetch(`${API}/weather/search?q=${encodeURIComponent(city)}&units=${currentUnits}`);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    showError(data.detail || 'Something went wrong');
+                    return;
+                }
+
+                displayWeather(data);
+            } catch (err) {
+                showError('Could not connect to the server. Make sure the backend is running.');
+            }
         }
 
         document.getElementById('search-input').addEventListener('keypress', function (e) {
