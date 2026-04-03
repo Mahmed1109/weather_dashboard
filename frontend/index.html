@@ -17,6 +17,7 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             color: white;
+            transition: background 1s ease;
         }
 
         header {
@@ -142,6 +143,9 @@
 
         .temp-info {
             text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
         }
 
         .temperature {
@@ -155,6 +159,18 @@
             font-size: 0.9rem;
             margin-top: 5px;
             text-transform: capitalize;
+        }
+
+        .weather-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 5px;
+        }
+
+        .weather-icon-emoji {
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 5px;
         }
 
         .weather-stats {
@@ -236,6 +252,7 @@
                     <p id="country-name">--</p>
                 </div>
                 <div class="temp-info">
+                    <div class="weather-icon-emoji" id="weather-emoji">⛅</div>
                     <div class="temperature" id="temperature">--</div>
                     <div class="description" id="description">--</div>
                 </div>
@@ -274,6 +291,22 @@
         const API = 'http://127.0.0.1:8000';
         let currentUnits = 'metric';
 
+        const weatherEmojis = {
+            '01d': '☀️', '01n': '🌙',
+            '02d': '⛅', '02n': '⛅',
+            '03d': '☁️', '03n': '☁️',
+            '04d': '☁️', '04n': '☁️',
+            '09d': '🌧️', '09n': '🌧️',
+            '10d': '🌦️', '10n': '🌧️',
+            '11d': '⛈️', '11n': '⛈️',
+            '13d': '❄️', '13n': '❄️',
+            '50d': '🌫️', '50n': '🌫️'
+        };
+
+        function getWeatherEmoji(icon) {
+            return weatherEmojis[icon] || '🌡️';
+        }
+
         function showLoading() {
             document.getElementById('loading').classList.add('active');
             document.getElementById('error-message').classList.remove('active');
@@ -293,13 +326,8 @@
             document.getElementById('weather-card').classList.add('active');
         }
 
-        function getUnitSymbol() {
-            return currentUnits === 'metric' ? '°C' : '°F';
-        }
-
-        function getWindUnit() {
-            return currentUnits === 'metric' ? 'm/s' : 'mph';
-        }
+        function getUnitSymbol() { return currentUnits === 'metric' ? '°C' : '°F'; }
+        function getWindUnit() { return currentUnits === 'metric' ? 'm/s' : 'mph'; }
 
         function displayWeather(data) {
             document.getElementById('city-name').textContent = data.city;
@@ -312,6 +340,7 @@
             document.getElementById('pressure').textContent = `${data.pressure} hPa`;
             document.getElementById('visibility').textContent = `${(data.visibility / 1000).toFixed(1)} km`;
             document.getElementById('temp-range').textContent = `${Math.round(data.temp_max)}° / ${Math.round(data.temp_min)}°`;
+            document.getElementById('weather-emoji').textContent = getWeatherEmoji(data.icon);
             showWeather();
         }
 
