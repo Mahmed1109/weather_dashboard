@@ -161,12 +161,6 @@
             text-transform: capitalize;
         }
 
-        .weather-icon {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 5px;
-        }
-
         .weather-icon-emoji {
             font-size: 4rem;
             line-height: 1;
@@ -177,17 +171,29 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 15px;
+            margin-top: 10px;
         }
 
         .stat-item {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 15px;
+            padding: 20px 15px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: background 0.2s;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
         }
 
         .stat-value {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 500;
             margin-bottom: 4px;
         }
@@ -197,6 +203,12 @@
             color: rgba(255, 255, 255, 0.4);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin: 25px 0;
         }
 
         .error-message {
@@ -257,28 +269,37 @@
                     <div class="description" id="description">--</div>
                 </div>
             </div>
+
+            <hr class="divider">
+
             <div class="weather-stats">
                 <div class="stat-item">
+                    <div class="stat-icon">🌡️</div>
                     <div class="stat-value" id="feels-like">--</div>
                     <div class="stat-label">Feels Like</div>
                 </div>
                 <div class="stat-item">
+                    <div class="stat-icon">💧</div>
                     <div class="stat-value" id="humidity">--</div>
                     <div class="stat-label">Humidity</div>
                 </div>
                 <div class="stat-item">
+                    <div class="stat-icon">💨</div>
                     <div class="stat-value" id="wind-speed">--</div>
                     <div class="stat-label">Wind Speed</div>
                 </div>
                 <div class="stat-item">
+                    <div class="stat-icon">🔵</div>
                     <div class="stat-value" id="pressure">--</div>
                     <div class="stat-label">Pressure</div>
                 </div>
                 <div class="stat-item">
+                    <div class="stat-icon">👁️</div>
                     <div class="stat-value" id="visibility">--</div>
                     <div class="stat-label">Visibility</div>
                 </div>
                 <div class="stat-item">
+                    <div class="stat-icon">🌡️</div>
                     <div class="stat-value" id="temp-range">--</div>
                     <div class="stat-label">H / L</div>
                 </div>
@@ -303,9 +324,7 @@
             '50d': '🌫️', '50n': '🌫️'
         };
 
-        function getWeatherEmoji(icon) {
-            return weatherEmojis[icon] || '🌡️';
-        }
+        function getWeatherEmoji(icon) { return weatherEmojis[icon] || '🌡️'; }
 
         function showLoading() {
             document.getElementById('loading').classList.add('active');
