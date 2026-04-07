@@ -211,6 +211,67 @@
             margin: 25px 0;
         }
 
+        .forecast-section {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .forecast-section.active {
+            display: block;
+        }
+
+        .forecast-section h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 20px;
+        }
+
+        .forecast-days {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .forecast-day {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .forecast-day .day-name {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .forecast-day .day-emoji {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .forecast-day .day-temp {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .forecast-day .day-desc {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 5px;
+            text-transform: capitalize;
+        }
+
         .error-message {
             text-align: center;
             padding: 20px;
@@ -306,6 +367,11 @@
             </div>
         </div>
 
+        <div class="forecast-section" id="forecast-section">
+            <h3>5 Day Forecast</h3>
+            <div class="forecast-days" id="forecast-days"></div>
+        </div>
+
     </div>
 
     <script>
@@ -324,12 +390,15 @@
             '50d': '🌫️', '50n': '🌫️'
         };
 
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
         function getWeatherEmoji(icon) { return weatherEmojis[icon] || '🌡️'; }
 
         function showLoading() {
             document.getElementById('loading').classList.add('active');
             document.getElementById('error-message').classList.remove('active');
             document.getElementById('weather-card').classList.remove('active');
+            document.getElementById('forecast-section').classList.remove('active');
         }
 
         function showError(message) {
@@ -337,6 +406,7 @@
             document.getElementById('error-message').textContent = message;
             document.getElementById('error-message').classList.add('active');
             document.getElementById('weather-card').classList.remove('active');
+            document.getElementById('forecast-section').classList.remove('active');
         }
 
         function showWeather() {
@@ -363,6 +433,34 @@
             showWeather();
         }
 
+        function displayForecast(data) {
+            const dailyMap = {};
+
+            data.forecast.forEach(item => {
+                if (!dailyMap[item.date]) {
+                    dailyMap[item.date] = item;
+                }
+            });
+
+            const days = Object.values(dailyMap).slice(0, 5);
+            const container = document.getElementById('forecast-days');
+
+            container.innerHTML = days.map(day => {
+                const date = new Date(day.date);
+                const dayName = dayNames[date.getDay()];
+                return `
+                    <div class="forecast-day">
+                        <div class="day-name">${dayName}</div>
+                        <div class="day-emoji">${getWeatherEmoji(day.icon)}</div>
+                        <div class="day-temp">${Math.round(day.temperature)}${getUnitSymbol()}</div>
+                        <div class="day-desc">${day.description}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('forecast-section').classList.add('active');
+        }
+
         async function searchWeather() {
             const city = document.getElementById('search-input').value.trim();
             if (!city) return;
@@ -370,15 +468,22 @@
             showLoading();
 
             try {
-                const res = await fetch(`${API}/weather/search?q=${encodeURIComponent(city)}&units=${currentUnits}`);
-                const data = await res.json();
+                const [weatherRes, forecastRes] = await Promise.all([
+                    fetch(`${API}/weather/search?q=${encodeURIComponent(city)}&units=${currentUnits}`),
+                    fetch(`${API}/weather/forecast/${encodeURIComponent(city)}?units=${currentUnits}`)
+                ]);
 
-                if (!res.ok) {
-                    showError(data.detail || 'Something went wrong');
+                const weatherData = await weatherRes.json();
+                const forecastData = await forecastRes.json();
+
+                if (!weatherRes.ok) {
+                    showError(weatherData.detail || 'Something went wrong');
                     return;
                 }
 
-                displayWeather(data);
+                displayWeather(weatherData);
+                if (forecastRes.ok) displayForecast(forecastData);
+
             } catch (err) {
                 showError('Could not connect to the server. Make sure the backend is running.');
             }
