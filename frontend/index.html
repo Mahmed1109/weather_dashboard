@@ -390,6 +390,33 @@
             '50d': '🌫️', '50n': '🌫️'
         };
 
+        const weatherBackgrounds = {
+            'clear': 'linear-gradient(135deg, #f093fb 0%, #f5a623 50%, #f7b733 100%)',
+            'clear-night': 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+            'clouds': 'linear-gradient(135deg, #606c88 0%, #3f4c6b 100%)',
+            'rain': 'linear-gradient(135deg, #373b44 0%, #4286f4 100%)',
+            'drizzle': 'linear-gradient(135deg, #373b44 0%, #4286f4 100%)',
+            'thunderstorm': 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #1a1a2e 100%)',
+            'snow': 'linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)',
+            'mist': 'linear-gradient(135deg, #606c88 0%, #3f4c6b 100%)',
+            'default': 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+        };
+
+        function getBackground(description, icon) {
+            const isNight = icon && icon.endsWith('n');
+            const desc = description.toLowerCase();
+
+            if (desc.includes('clear') && isNight) return weatherBackgrounds['clear-night'];
+            if (desc.includes('clear')) return weatherBackgrounds['clear'];
+            if (desc.includes('cloud')) return weatherBackgrounds['clouds'];
+            if (desc.includes('rain')) return weatherBackgrounds['rain'];
+            if (desc.includes('drizzle')) return weatherBackgrounds['drizzle'];
+            if (desc.includes('thunder')) return weatherBackgrounds['thunderstorm'];
+            if (desc.includes('snow')) return weatherBackgrounds['snow'];
+            if (desc.includes('mist') || desc.includes('fog') || desc.includes('haze')) return weatherBackgrounds['mist'];
+            return weatherBackgrounds['default'];
+        }
+
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
         function getWeatherEmoji(icon) { return weatherEmojis[icon] || '🌡️'; }
@@ -430,16 +457,14 @@
             document.getElementById('visibility').textContent = `${(data.visibility / 1000).toFixed(1)} km`;
             document.getElementById('temp-range').textContent = `${Math.round(data.temp_max)}° / ${Math.round(data.temp_min)}°`;
             document.getElementById('weather-emoji').textContent = getWeatherEmoji(data.icon);
+            document.body.style.background = getBackground(data.description, data.icon);
             showWeather();
         }
 
         function displayForecast(data) {
             const dailyMap = {};
-
             data.forecast.forEach(item => {
-                if (!dailyMap[item.date]) {
-                    dailyMap[item.date] = item;
-                }
+                if (!dailyMap[item.date]) dailyMap[item.date] = item;
             });
 
             const days = Object.values(dailyMap).slice(0, 5);
