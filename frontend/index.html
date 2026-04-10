@@ -39,6 +39,33 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        .unit-toggle {
+            display: flex;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .unit-btn {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .unit-btn.active {
+            background: white;
+            color: #1a1a2e;
+        }
+
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -325,7 +352,10 @@
 
     <header>
         <h1>⛅ Weather Dashboard</h1>
-        <p>Powered by OpenWeatherMap</p>
+        <div class="unit-toggle">
+            <button class="unit-btn active" id="btn-celsius" onclick="setUnits('metric')">°C</button>
+            <button class="unit-btn" id="btn-fahrenheit" onclick="setUnits('imperial')">°F</button>
+        </div>
     </header>
 
     <div class="container">
@@ -403,6 +433,7 @@
         const API = 'http://127.0.0.1:8000';
         let currentUnits = 'metric';
         let recentSearches = [];
+        let lastSearchedCity = null;
 
         const weatherEmojis = {
             '01d': '☀️', '01n': '🌙',
@@ -446,6 +477,16 @@
 
         function getWeatherEmoji(icon) { return weatherEmojis[icon] || '🌡️'; }
 
+        function setUnits(units) {
+            currentUnits = units;
+            document.getElementById('btn-celsius').classList.toggle('active', units === 'metric');
+            document.getElementById('btn-fahrenheit').classList.toggle('active', units === 'imperial');
+            if (lastSearchedCity) {
+                document.getElementById('search-input').value = lastSearchedCity;
+                searchWeather();
+            }
+        }
+
         function addRecentSearch(city) {
             recentSearches = recentSearches.filter(c => c.toLowerCase() !== city.toLowerCase());
             recentSearches.unshift(city);
@@ -455,10 +496,7 @@
 
         function renderRecentSearches() {
             const container = document.getElementById('recent-searches');
-            if (recentSearches.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
+            if (recentSearches.length === 0) { container.innerHTML = ''; return; }
             container.innerHTML = recentSearches.map(city =>
                 `<span class="recent-tag" onclick="quickSearch('${city}')">${city}</span>`
             ).join('');
@@ -554,6 +592,7 @@
                     return;
                 }
 
+                lastSearchedCity = weatherData.city;
                 addRecentSearch(weatherData.city);
                 displayWeather(weatherData);
                 if (forecastRes.ok) displayForecast(forecastData);
