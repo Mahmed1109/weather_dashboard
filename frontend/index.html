@@ -34,14 +34,8 @@
             letter-spacing: 1px;
         }
 
-        header p {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
         .unit-toggle {
             display: flex;
-            gap: 0;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50px;
             padding: 4px;
@@ -134,6 +128,11 @@
 
         .search-bar button:hover {
             background: #357abd;
+        }
+
+        .search-bar button:disabled {
+            background: rgba(74, 144, 217, 0.5);
+            cursor: not-allowed;
         }
 
         .recent-searches {
@@ -323,27 +322,70 @@
             text-transform: capitalize;
         }
 
-        .error-message {
+        .error-card {
+            background: rgba(220, 38, 38, 0.15);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 16px;
+            padding: 24px 30px;
             text-align: center;
-            padding: 20px;
-            color: #ff6b6b;
-            font-size: 0.9rem;
             display: none;
+            margin-bottom: 30px;
         }
 
-        .error-message.active {
+        .error-card.active {
             display: block;
         }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
+        .error-card .error-emoji {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .error-card .error-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fca5a5;
+            margin-bottom: 6px;
+        }
+
+        .error-card .error-detail {
+            font-size: 0.85rem;
             color: rgba(255, 255, 255, 0.5);
-            display: none;
         }
 
-        .loading.active {
+        .loading-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .loading-card.active {
             display: block;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-card p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -365,13 +407,21 @@
             <p>Search for any city in the world</p>
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="Enter a city name...">
-                <button onclick="searchWeather()">Search</button>
+                <button onclick="searchWeather()" id="search-btn">Search</button>
             </div>
             <div class="recent-searches" id="recent-searches"></div>
         </div>
 
-        <div class="loading" id="loading">Loading weather data...</div>
-        <div class="error-message" id="error-message"></div>
+        <div class="loading-card" id="loading">
+            <div class="spinner"></div>
+            <p>Fetching weather data...</p>
+        </div>
+
+        <div class="error-card" id="error-message">
+            <div class="error-emoji">🌧️</div>
+            <div class="error-title">Couldn't find that city</div>
+            <div class="error-detail" id="error-detail"></div>
+        </div>
 
         <div class="weather-card" id="weather-card">
             <div class="weather-main">
@@ -512,20 +562,23 @@
             document.getElementById('error-message').classList.remove('active');
             document.getElementById('weather-card').classList.remove('active');
             document.getElementById('forecast-section').classList.remove('active');
+            document.getElementById('search-btn').disabled = true;
         }
 
         function showError(message) {
             document.getElementById('loading').classList.remove('active');
-            document.getElementById('error-message').textContent = message;
             document.getElementById('error-message').classList.add('active');
+            document.getElementById('error-detail').textContent = message;
             document.getElementById('weather-card').classList.remove('active');
             document.getElementById('forecast-section').classList.remove('active');
+            document.getElementById('search-btn').disabled = false;
         }
 
         function showWeather() {
             document.getElementById('loading').classList.remove('active');
             document.getElementById('error-message').classList.remove('active');
             document.getElementById('weather-card').classList.add('active');
+            document.getElementById('search-btn').disabled = false;
         }
 
         function getUnitSymbol() { return currentUnits === 'metric' ? '°C' : '°F'; }
