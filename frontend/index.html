@@ -21,7 +21,7 @@
         }
 
         header {
-            padding: 30px 40px;
+            padding: 20px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -29,7 +29,7 @@
         }
 
         header h1 {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 600;
             letter-spacing: 1px;
         }
@@ -63,24 +63,24 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 30px 16px;
         }
 
         .search-section {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
 
         .search-section h2 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 300;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             letter-spacing: 2px;
         }
 
         .search-section p {
             color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             font-size: 0.9rem;
         }
 
@@ -93,7 +93,7 @@
 
         .search-bar input {
             flex: 1;
-            padding: 14px 20px;
+            padding: 12px 18px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50px;
             background: rgba(255, 255, 255, 0.1);
@@ -102,6 +102,7 @@
             font-family: inherit;
             outline: none;
             backdrop-filter: blur(10px);
+            min-width: 0;
         }
 
         .search-bar input::placeholder {
@@ -114,7 +115,7 @@
         }
 
         .search-bar button {
-            padding: 14px 28px;
+            padding: 12px 22px;
             border: none;
             border-radius: 50px;
             background: #4a90d9;
@@ -124,6 +125,7 @@
             cursor: pointer;
             font-family: inherit;
             transition: background 0.2s;
+            white-space: nowrap;
         }
 
         .search-bar button:hover {
@@ -163,10 +165,10 @@
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 20px;
-            padding: 40px;
+            padding: 28px;
             backdrop-filter: blur(10px);
             display: none;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .weather-card.active {
@@ -177,11 +179,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         .city-info h2 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 300;
         }
 
@@ -199,7 +203,7 @@
         }
 
         .temperature {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 200;
             line-height: 1;
         }
@@ -212,22 +216,22 @@
         }
 
         .weather-icon-emoji {
-            font-size: 4rem;
+            font-size: 3.5rem;
             line-height: 1;
             margin-bottom: 5px;
         }
 
         .weather-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             margin-top: 10px;
         }
 
         .stat-item {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 20px 15px;
+            padding: 16px 12px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.06);
             transition: background 0.2s;
@@ -238,18 +242,18 @@
         }
 
         .stat-icon {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
+            font-size: 1.2rem;
+            margin-bottom: 6px;
         }
 
         .stat-value {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 500;
             margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: rgba(255, 255, 255, 0.4);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -258,17 +262,17 @@
         .divider {
             border: none;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
-            margin: 25px 0;
+            margin: 20px 0;
         }
 
         .forecast-section {
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 20px;
-            padding: 30px;
+            padding: 24px;
             backdrop-filter: blur(10px);
             display: none;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .forecast-section.active {
@@ -280,45 +284,45 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: rgba(255, 255, 255, 0.4);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .forecast-days {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
 
         .forecast-day {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 15px 10px;
+            padding: 12px 8px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .forecast-day .day-name {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .forecast-day .day-emoji {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
+            font-size: 1.5rem;
+            margin-bottom: 6px;
         }
 
         .forecast-day .day-temp {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 500;
         }
 
         .forecast-day .day-desc {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: rgba(255, 255, 255, 0.4);
-            margin-top: 5px;
+            margin-top: 4px;
             text-transform: capitalize;
         }
 
@@ -326,10 +330,10 @@
             background: rgba(220, 38, 38, 0.15);
             border: 1px solid rgba(220, 38, 38, 0.3);
             border-radius: 16px;
-            padding: 24px 30px;
+            padding: 24px;
             text-align: center;
             display: none;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .error-card.active {
@@ -357,10 +361,10 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 40px 30px;
+            padding: 40px 24px;
             text-align: center;
             display: none;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .loading-card.active {
@@ -386,6 +390,41 @@
         .loading-card p {
             color: rgba(255, 255, 255, 0.5);
             font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1rem;
+            }
+
+            .search-section h2 {
+                font-size: 1.4rem;
+            }
+
+            .city-info h2 {
+                font-size: 1.6rem;
+            }
+
+            .temperature {
+                font-size: 2.8rem;
+            }
+
+            .weather-icon-emoji {
+                font-size: 2.8rem;
+            }
+
+            .weather-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .forecast-days {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .forecast-day:nth-child(4),
+            .forecast-day:nth-child(5) {
+                display: none;
+            }
         }
     </style>
 </head>
